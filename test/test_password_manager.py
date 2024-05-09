@@ -7,7 +7,7 @@ import io
 import os
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 def aws_creds():
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
@@ -32,7 +32,6 @@ class TestDisplayMenu:
     # remake this test with mock moto
     def test_display_number_or_secrets(self):
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
-            # with patch("builtins.input", return_value="q"):
             with patch("builtins.input", side_effect=["l", "x"]):
                 display_menu()
         assert "0 secret(s) available" in fake_out.getvalue()
@@ -43,9 +42,9 @@ class TestStoreSecret:
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
             with patch(
                 "builtins.input",
-                side_effect=["e", "Missile_Launch_Codes", "bidenj", "Pa55word", "x"],
+                side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
             ):
-                display_menu()
+                store_secret(sm_client)
 
         res_list = fake_out.getvalue().split("\n")
 
@@ -55,14 +54,14 @@ class TestStoreSecret:
     def test_saves_the_secret(self, sm_client):
         with patch(
             "builtins.input",
-            side_effect=["e", "Missile_Launch_Codes", "bidenj", "Pa55word", "x"],
+            side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
         ):
-            display_menu()
+            store_secret(sm_client)
         with patch(
             "builtins.input",
-            side_effect=["e", "Missile_Launch_Codes2", "xi", "Pa55wordxi", "x"],
+            side_effect=["Missile_Launch_Codes2", "xi", "Pa55wordxi"],
         ):
-            display_menu()
+            store_secret(sm_client)
 
         secret_list = [
             secret["Name"] for secret in sm_client.list_secrets()["SecretList"]
@@ -74,9 +73,9 @@ class TestStoreSecret:
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
             with patch(
                 "builtins.input",
-                side_effect=["e", "Missile_Launch_Codes", "bidenj", "Pa55word", "x"],
+                side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
             ):
-                display_menu()
+                store_secret(sm_client)
 
         secret_string = sm_client.get_secret_value(SecretId="Missile_Launch_Codes")
 
@@ -88,9 +87,9 @@ class TestStoreSecret:
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
             with patch(
                 "builtins.input",
-                side_effect=["e", "Missile_L aunch_Codes", "bidenj", "Pa55word", "x"],
+                side_effect=["Missile_L aunch_Codes", "bidenj", "Pa55word"],
             ):
-                display_menu()
+                store_secret(sm_client)
 
         res_list = fake_out.getvalue().split("\n")
 
@@ -100,14 +99,14 @@ class TestStoreSecret:
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
             with patch(
                 "builtins.input",
-                side_effect=["e", "Missile_Launch_Codes", "bidenj", "Pa55word", "x"],
+                side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
             ):
-                display_menu()
+                store_secret(sm_client)
             with patch(
                 "builtins.input",
-                side_effect=["e", "Missile_Launch_Codes", "bidenj", "Pa55word", "x"],
+                side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
             ):
-                display_menu()
+                store_secret(sm_client)
 
         assert "Secret identifier already exists." in fake_out.getvalue()
 
@@ -158,3 +157,40 @@ class TestRetrieveSecrets:
 
         assert "Specify secret to retrieve:" in fake_out.getvalue()
         assert "Invalid secret" in fake_out.getvalue()
+
+
+class TestDeleteSecret:
+    def test_deletes_secret(self, sm_client):
+        with patch(
+            "builtins.input",
+            side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
+        ):
+            store_secret(sm_client)
+
+        secrets_list = [
+            secret["Name"] for secret in sm_client.list_secrets()["SecretList"]
+        ]
+
+        assert "Missile_Launch_Codes" in secrets_list
+
+        with patch(
+            "builtins.input",
+            side_effect=["Missile_Launch_Codes"],
+        ):
+
+            delete_secret(sm_client)
+
+        secrets_list = [
+            secret["Name"] for secret in sm_client.list_secrets()["SecretList"]
+        ]
+        assert "Missile_Launch_Codes" not in secrets_list
+
+    def test_delete_non_existing_secret(self, sm_client):
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+            with patch(
+                "builtins.input",
+                side_effect=["Missile_Launch_Codes"],
+            ):
+                delete_secret(sm_client)
+
+        assert "There are no secrets with that name." in fake_out.getvalue()

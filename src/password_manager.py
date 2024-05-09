@@ -76,14 +76,23 @@ def retrieve_secrets(sm_client):
     user_name = secret_string.split(":")[1][:-11]
     password = secret_string.split(":")[-1][:-1]
     with open("output/secrets.txt", "w") as f:
-        # f.write(secret_string["SecretString"])
         f.write(f"UserId: {user_name}\n")
         f.write(f"Password: {password}")
     print("Secrets stored in local file in secrets.txt")
 
 
 def delete_secret(sm_client):
-    pass
+    print("Specify secret to delete:")
+    secret_to_delete = input()
+
+    if secret_to_delete not in [
+        secret["Name"] for secret in sm_client.list_secrets()["SecretList"]
+    ]:
+        print("There are no secrets with that name.")
+        return 0
+    res = sm_client.delete_secret(
+        SecretId=secret_to_delete, ForceDeleteWithoutRecovery=True
+    )
 
 
 if __name__ == "__main__":

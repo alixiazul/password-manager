@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError
 def display_menu():
     valid_inputs = ["e", "r", "d", "l", "x"]
     user_input = "a"
-    while user_input not in valid_inputs:
+    while user_input != "x":
         print("Please specify [e]ntry, [r]etrieval, [d]eletion, [l]isting or e[x]it:")
         user_input = input()
         sm_client = boto3.client("secretsmanager")
@@ -15,11 +15,11 @@ def display_menu():
         if user_input == "e":
             store_secret(sm_client)
         elif user_input == "r":
-            print()
+            retrieve_secrets(sm_client)
         elif user_input == "d":
-            print()
+            delete_secret(sm_client)
         elif user_input == "l":
-            number_of_secrets = 0
+            number_of_secrets = list_secrets(sm_client)
             print(f"{number_of_secrets} secret(s) available")
 
 
@@ -53,9 +53,6 @@ def store_secret(sm_client):
         if "A resource with the ID you requested already exists." in str(e):
             print("Secret identifier already exists.")
 
-    # print(res)
-
-    # is everyting ok
     print("Secret saved.")
 
 
@@ -78,7 +75,7 @@ def retrieve_secrets(sm_client):
     with open("output/secrets.txt", "w") as f:
         f.write(f"UserId: {user_name}\n")
         f.write(f"Password: {password}")
-    print("Secrets stored in local file in secrets.txt")
+    print("Secrets stored in local file secrets.txt")
 
 
 def delete_secret(sm_client):
@@ -93,6 +90,7 @@ def delete_secret(sm_client):
     res = sm_client.delete_secret(
         SecretId=secret_to_delete, ForceDeleteWithoutRecovery=True
     )
+    print("Deleted")
 
 
 if __name__ == "__main__":

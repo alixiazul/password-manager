@@ -23,18 +23,91 @@ def sm_client():
 
 
 class TestDisplayMenu:
-    def test_invalid_input(self):
+    def test_invalid_input(self, sm_client):
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
             with patch("builtins.input", side_effect=["q", "x"]):
                 display_menu()
         assert "Invalid input." in fake_out.getvalue()
 
     # remake this test with mock moto
-    def test_display_number_or_secrets(self):
+    def test_display_number_or_secrets(self, sm_client):
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
             with patch("builtins.input", side_effect=["l", "x"]):
                 display_menu()
         assert "0 secret(s) available" in fake_out.getvalue()
+
+    def test_store_secret_message(self, sm_client):
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+            with patch(
+                "builtins.input",
+                side_effect=["e", "Missile_Launch_Codes", "bidenj", "Pa55word", "x"],
+            ):
+                display_menu()
+
+        assert "Secret saved." in fake_out.getvalue()
+
+    def test_list_correct_number_of_secrets_when_one_secret_exists(self, sm_client):
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+            with patch(
+                "builtins.input",
+                side_effect=[
+                    "e",
+                    "Missile_Launch_Codes",
+                    "bidenj",
+                    "Pa55word",
+                    "l",
+                    "x",
+                ],
+            ):
+                display_menu()
+
+        assert "1 secret(s) available" in fake_out.getvalue()
+
+    def test_retreaval_password(self, sm_client):
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+            with patch(
+                "builtins.input",
+                side_effect=[
+                    "e",
+                    "Missile_Launch_Codes",
+                    "bidenj",
+                    "Pa55word",
+                    "r",
+                    "Missile_Launch_Codes",
+                    "x",
+                ],
+            ):
+                display_menu()
+
+        assert "Secrets stored in local file secrets.txt" in fake_out.getvalue()
+        with open("output/secrets.txt") as f:
+            line = f.readline()
+            assert line == "UserId: bidenj\n"
+            line = f.readline()
+            assert line == "Password: Pa55word"
+
+    def test_delete_password(self, sm_client):
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+            with patch(
+                "builtins.input",
+                side_effect=[
+                    "e",
+                    "Missile_Launch_Codes",
+                    "bidenj",
+                    "Pa55word",
+                    "d",
+                    "Missile_Launch_Codes",
+                    "x",
+                ],
+            ):
+                display_menu()
+
+        assert "Specify secret to delete:" in fake_out.getvalue()
+        assert "Deleted" in fake_out.getvalue()
+        secrets_list = [
+            secret["Name"] for secret in sm_client.list_secrets()["SecretList"]
+        ]
+        assert "Missile_Launch_Codes" not in secrets_list
 
 
 class TestStoreSecret:
@@ -140,7 +213,7 @@ class TestRetrieveSecrets:
                 retrieve_secrets(sm_client)
 
         assert "Specify secret to retrieve:" in fake_out.getvalue()
-        assert "Secrets stored in local file in secrets.txt" in fake_out.getvalue()
+        assert "Secrets stored in local file secrets.txt" in fake_out.getvalue()
         with open("output/secrets.txt") as f:
             line = f.readline()
             assert line == "UserId: bidenj\n"

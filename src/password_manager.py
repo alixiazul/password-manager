@@ -1,6 +1,5 @@
 import boto3
 from botocore.exceptions import ClientError
-import os
 
 
 def display_menu():
@@ -51,7 +50,8 @@ def store_secret(sm_client):
             + "}",
         )
     except ClientError as e:
-        print(e)
+        if "A resource with the ID you requested already exists." in str(e):
+            print("Secret identifier already exists.")
 
     # print(res)
 
@@ -61,10 +61,25 @@ def store_secret(sm_client):
 
 def list_secrets(sm_client):
     res = sm_client.list_secrets()
+    return len(res["SecretList"])
 
 
 def retrieve_secrets(sm_client):
-    pass
+    print("Specify secret to retrieve:")
+    secret_name = input()
+    try:
+        secret_string = sm_client.get_secret_value(SecretId=secret_name)["SecretString"]
+    except ClientError as e:
+        print("Invalid secret")
+        return 0
+
+    user_name = secret_string.split(":")[1][:-11]
+    password = secret_string.split(":")[-1][:-1]
+    with open("output/secrets.txt", "w") as f:
+        # f.write(secret_string["SecretString"])
+        f.write(f"UserId: {user_name}\n")
+        f.write(f"Password: {password}")
+    print("Secrets stored in local file in secrets.txt")
 
 
 def delete_secret(sm_client):

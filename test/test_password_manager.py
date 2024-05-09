@@ -1,4 +1,4 @@
-from src.password_manager import display_menu
+from src.password_manager import *
 from unittest.mock import patch
 from moto import mock_aws
 import boto3
@@ -111,13 +111,50 @@ class TestStoreSecret:
 
         assert "Secret identifier already exists." in fake_out.getvalue()
 
-    # def test_(self, sm_client):
-    #     res = sm_client.create_secret(
-    #         Name="MyT_estSecret",
-    #         SecretString='{"username":"test1","password":"this is just a test"}',
-    #     )
-    #     print(res)
-    #     res = sm_client.list_secrets()
-    #     print(res)
-    #     # sm_client.put_secret_value("this is just a test")
-    #     assert False
+
+class TestListSecrets:
+    def test_no_secrets(self, sm_client):
+        assert list_secrets(sm_client) == 0
+
+    def test_one_secrets_saved(self, sm_client):
+        with patch(
+            "builtins.input",
+            side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
+        ):
+            store_secret(sm_client)
+        assert list_secrets(sm_client) == 1
+
+
+class TestRetrieveSecrets:
+    def test_retrieve_secrets(self, sm_client):
+        with patch(
+            "builtins.input",
+            side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
+        ):
+            store_secret(sm_client)
+
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+            with patch(
+                "builtins.input",
+                side_effect=["Missile_Launch_Codes"],
+            ):
+                retrieve_secrets(sm_client)
+
+        assert "Specify secret to retrieve:" in fake_out.getvalue()
+        assert "Secrets stored in local file in secrets.txt" in fake_out.getvalue()
+        with open("output/secrets.txt") as f:
+            line = f.readline()
+            assert line == "UserId: bidenj\n"
+            line = f.readline()
+            assert line == "Password: Pa55word"
+
+    def test_secrets_do_not_exist(self, sm_client):
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+            with patch(
+                "builtins.input",
+                side_effect=["Missile"],
+            ):
+                retrieve_secrets(sm_client)
+
+        assert "Specify secret to retrieve:" in fake_out.getvalue()
+        assert "Invalid secret" in fake_out.getvalue()

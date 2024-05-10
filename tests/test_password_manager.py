@@ -109,6 +109,16 @@ class TestDisplayMenu:
         ]
         assert "Missile_Launch_Codes" not in secrets_list
 
+    def test_goodbye_message(self, sm_client):
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+            with patch(
+                "builtins.input",
+                side_effect=["x"],
+            ):
+                display_menu()
+
+        assert "Your secrets are saved with me! Bye!" in fake_out.getvalue()
+        
 
 class TestStoreSecret:
     def test_asks_for_secret_information(self, sm_client):

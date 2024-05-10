@@ -22,6 +22,8 @@ def display_menu():
             number_of_secrets = list_secrets(sm_client)
             print(f"{number_of_secrets} secret(s) available")
 
+    print("Your secrets are saved with me! Bye!")
+
 
 def store_secret(sm_client):
     print("Secret identifier:")

@@ -13,13 +13,13 @@ def aws_creds():
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
-    os.environ["AWS_REGION"] = "eu-west-2"
+    os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 
 
 @pytest.fixture(scope="function")
 def sm_client(aws_creds):
     with mock_aws():
-        yield boto3.client("secretsmanager", region_name=os.environ["AWS_REGION"])
+        yield boto3.client("secretsmanager")
 
 
 class TestDisplayMenu:

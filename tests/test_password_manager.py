@@ -19,7 +19,7 @@ def aws_creds():
 @pytest.fixture(scope="function")
 def sm_client(aws_creds):
     with mock_aws():
-        yield boto3.client("secretsmanager")
+        yield boto3.client("secretsmanager", region_name="eu-west-2")
 
 
 class TestDisplayMenu:

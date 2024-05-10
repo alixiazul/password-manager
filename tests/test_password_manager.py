@@ -13,7 +13,7 @@ def aws_creds():
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
-    os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
+    os.environ["AWS_REGION"] = "eu-west-2"
 
 
 @pytest.fixture(scope="function")
@@ -118,7 +118,7 @@ class TestDisplayMenu:
                 display_menu()
 
         assert "Your secrets are saved with me! Bye!" in fake_out.getvalue()
-        
+
 
 class TestStoreSecret:
     def test_asks_for_secret_information(self, sm_client):

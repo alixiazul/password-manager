@@ -25,6 +25,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12.2'
+      - name: AWS Credentials
+        uses: 
       - name: Install make
         run: sudo apt install make -y
       - name: Install Application Requirements

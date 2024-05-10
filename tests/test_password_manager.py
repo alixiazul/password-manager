@@ -17,7 +17,7 @@ def aws_creds():
 
 
 @pytest.fixture(scope="function")
-def sm_client():
+def sm_client(aws_creds):
     with mock_aws():
         yield boto3.client("secretsmanager")
 

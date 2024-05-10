@@ -95,5 +95,9 @@ def delete_secret(sm_client):
     print("Deleted")
 
 
+def generate_password():
+    pass
+
+
 if __name__ == "__main__":
     display_menu()

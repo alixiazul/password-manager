@@ -277,3 +277,8 @@ class TestDeleteSecret:
                 delete_secret(sm_client)
 
         assert "There are no secrets with that name." in fake_out.getvalue()
+
+
+class TestGeneratePassword:
+    def test_(self):
+        pass

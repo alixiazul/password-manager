@@ -282,3 +282,8 @@ class TestDeleteSecret:
 class TestGeneratePassword:
     def test_(self):
         pass
+
+
+class TestGeneratePasswordRandom:
+    def test_(self):
+        pass

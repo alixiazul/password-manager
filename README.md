@@ -43,3 +43,4 @@ To use this project, follow these steps:
 2. Run the application:
     python password_manager.py
 3. Follow the on-screen prompts to store, list, retrieve, or delete secrets.
+4. Retrieved secrets are located in directory "output" as secrets.txt

@@ -273,7 +273,7 @@ class TestDeleteSecret:
             with patch(
                 "builtins.input",
                 side_effect=["Missile_Launch_Codes"],
-            ):
+            ): 
                 delete_secret(sm_client)
 
         assert "There are no secrets with that name." in fake_out.getvalue()

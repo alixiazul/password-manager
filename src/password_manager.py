@@ -86,7 +86,7 @@ def delete_secret(sm_client):
 
     if secret_to_delete not in [
         secret["Name"] for secret in sm_client.list_secrets()["SecretList"]
-    ]:
+    ]: 
         print("There are no secrets with that name.")
         return 0
     res = sm_client.delete_secret(

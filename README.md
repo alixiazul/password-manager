@@ -15,25 +15,11 @@ The application allows you to:
 
 ## Skills
 
-- Know how to interact with AWS services programmatically in a Python script using Boto3.
-- Be able to use mocks to test Python code that uses Boto3.
-- Know how to test for exceptions in Boto3.
+- Interact with AWS services programmatically in a Python script using Boto3.
+- Use mocks to test Python code that uses Boto3.
+- Test for exceptions in Boto3.
 - Explore testing with the Moto library.
 - Use TDD to develop functionality.
-
-## Installation
-
-To install this project, follow these steps:
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/alixiazul/password-manager.git
-
-2. Navigate to the project directory:
-   cd password-manager-cli
-
-3. Install the required dependencies:
-   python password_manager.py
 
 ## Usage
 

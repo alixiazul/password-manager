@@ -1,4 +1,7 @@
-from src.password_manager import *
+from src.password_manager import (
+    display_menu, store_secret, list_secrets,
+    retrieve_secrets, delete_secret
+)
 from unittest.mock import patch
 from moto import mock_aws
 import boto3
@@ -40,7 +43,8 @@ class TestDisplayMenu:
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
             with patch(
                 "builtins.input",
-                side_effect=["e", "Missile_Launch_Codes", "bidenj", "Pa55word", "x"],
+                side_effect=["e", "Missile_Launch_Codes", "bidenj",
+                             "Pa55word", "x"],
             ):
                 display_menu()
 
@@ -153,7 +157,7 @@ class TestStoreSecret:
         assert "Missile_Launch_Codes2" in secret_list
 
     def test_secret_is_saved_correctly(self, sm_client):
-        with patch("sys.stdout", new=io.StringIO()) as fake_out:
+        with patch("sys.stdout", new=io.StringIO()):
             with patch(
                 "builtins.input",
                 side_effect=["Missile_Launch_Codes", "bidenj", "Pa55word"],
@@ -273,7 +277,7 @@ class TestDeleteSecret:
             with patch(
                 "builtins.input",
                 side_effect=["Missile_Launch_Codes"],
-            ): 
+            ):
                 delete_secret(sm_client)
 
         assert "There are no secrets with that name." in fake_out.getvalue()

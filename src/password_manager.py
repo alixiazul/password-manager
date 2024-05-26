@@ -43,7 +43,7 @@ def store_secret(sm_client):
     # dashes are fine and also unser scores
     try:
         sm_client = boto3.client("secretsmanager")
-        res = sm_client.create_secret(
+        sm_client.create_secret(
             Name=secret_identifier,
             SecretString='{"username":'
             + user_id
@@ -68,7 +68,7 @@ def retrieve_secrets(sm_client):
     secret_name = input()
     try:
         secret_string = sm_client.get_secret_value(SecretId=secret_name)["SecretString"]
-    except ClientError as e:
+    except ClientError:
         print("Invalid secret")
         return 0
 
@@ -86,10 +86,10 @@ def delete_secret(sm_client):
 
     if secret_to_delete not in [
         secret["Name"] for secret in sm_client.list_secrets()["SecretList"]
-    ]: 
+    ]:
         print("There are no secrets with that name.")
         return 0
-    res = sm_client.delete_secret(
+    sm_client.delete_secret(
         SecretId=secret_to_delete, ForceDeleteWithoutRecovery=True
     )
     print("Deleted")

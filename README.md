@@ -13,7 +13,7 @@ The application allows you to:
 - Retrieve a secret - the resulting user ID and password will be stored in a file instead of being printed out.
 - Delete a secret.
 
-## Learning Objectives
+## Skills
 
 - Know how to interact with AWS services programmatically in a Python script using Boto3.
 - Be able to use mocks to test Python code that uses Boto3.

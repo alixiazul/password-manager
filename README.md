@@ -23,6 +23,16 @@ The application allows you to:
 
 ## Usage
 
+To use this project, follow these steps:
+
+1. Set up your AWS credentials. You can do this by configuring the AWS CLI or setting the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
+2. Run the application:
+    python password_manager.py
+3. Follow the on-screen prompts to store, list, retrieve, or delete secrets.
+4. Retrieved secrets are located in directory "output" as secrets.txt
+
+## Configuration and installation
+
 Create Python interpreter environment: 
 ```sh
 make create-environment

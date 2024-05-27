@@ -1,6 +1,9 @@
 from src.password_manager import (
-    display_menu, store_secret, list_secrets,
-    retrieve_secrets, delete_secret
+    display_menu,
+    store_secret,
+    list_secrets,
+    retrieve_secrets,
+    delete_secret,
 )
 from unittest.mock import patch
 from moto import mock_aws
@@ -43,8 +46,7 @@ class TestDisplayMenu:
         with patch("sys.stdout", new=io.StringIO()) as fake_out:
             with patch(
                 "builtins.input",
-                side_effect=["e", "Missile_Launch_Codes", "bidenj",
-                             "Pa55word", "x"],
+                side_effect=["e", "Missile_Launch_Codes", "bidenj", "Pa55word", "x"],
             ):
                 display_menu()
 

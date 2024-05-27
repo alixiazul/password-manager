@@ -3,6 +3,9 @@ from botocore.exceptions import ClientError
 
 
 def display_menu():
+    """
+    Display the menu of the password manager
+    """
     valid_inputs = ["e", "r", "d", "l", "x"]
     user_input = "a"
     while user_input != "x":
@@ -25,7 +28,13 @@ def display_menu():
     print("Your secrets are saved with me! Bye!")
 
 
-def store_secret(sm_client):
+def store_secret(sm_client: boto3.session.Session.client):
+    """
+    Stores a secret in AWS Secrets Manager
+
+    Arguments:
+    - sm_client: AWS Secrets Manager
+    """
     print("Secret identifier:")
     secret_identifier = input()
 
@@ -59,11 +68,23 @@ def store_secret(sm_client):
 
 
 def list_secrets(sm_client):
+    """
+    List the number of secrets located in AWS Secrets Manager
+
+    Arguments:
+    - sm_client: AWS Secrets Manager
+    """
     res = sm_client.list_secrets()
     return len(res["SecretList"])
 
 
 def retrieve_secrets(sm_client):
+    """
+    Retrieves a secret from AWS Secrets Manager
+
+    Arguments:
+    - sm_client: AWS Secrets Manager
+    """
     print("Specify secret to retrieve:")
     secret_name = input()
     try:
@@ -81,6 +102,13 @@ def retrieve_secrets(sm_client):
 
 
 def delete_secret(sm_client):
+    """
+    Deletes a secret from AWS Secrets Manager
+    
+    Arguments:
+    - sm_client: AWS Secrets Manager
+    """
+
     print("Specify secret to delete:")
     secret_to_delete = input()
 
@@ -89,9 +117,7 @@ def delete_secret(sm_client):
     ]:
         print("There are no secrets with that name.")
         return 0
-    sm_client.delete_secret(
-        SecretId=secret_to_delete, ForceDeleteWithoutRecovery=True
-    )
+    sm_client.delete_secret(SecretId=secret_to_delete, ForceDeleteWithoutRecovery=True)
     print("Deleted")
 
 
